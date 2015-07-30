@@ -14,6 +14,13 @@ class CourseModelTests(TestCase):
 		now = timezone.now()
 		self.assertLess(course.created_at, now)
 
+class StepModelTests(TestCase):
+	def setUp(self):
+		self.course = Course.objects.create(
+			title="Python Testing",
+			description="Learn to write tests in Python"
+		)
+
 	def test_step_creation(self):
 		step = Step.objects.create(
 			title="Introduction to Doctests",
@@ -49,11 +56,11 @@ class CourseViewTests(TestCase):
 		resp = self.client.get(reverse('courses:detail', 
 										kwargs={'pk': self.course.pk}))
 		self.assertEqual(resp.status_code, 200)
-		self.assertIn(self.course, resp.context['courses'])
+		self.assertEqual(self.course, resp.context['course'])
 
 	def test_step_detail_view(self):
 		resp = self.client.get(reverse('courses:step', kwargs={
 										'course_pk': self.course.pk,
 										'step_pk': self.step.pk}))
 		self.assertEqual(resp.status_code, 200)
-		self.assertIn(self.step, resp.context['step'])
+		self.assertEqual(self.step, resp.context['step'])
