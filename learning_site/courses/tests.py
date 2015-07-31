@@ -41,7 +41,7 @@ class CourseViewTests(TestCase):
 		)
 		self.step = Step.objects.create(
 			title="Introduction to Doctests",
-			description="Learn to write tests in your docsctrings.",
+			description="Learn to write tests in your docstrings.",
 			course=self.course
 		)
 
@@ -51,12 +51,15 @@ class CourseViewTests(TestCase):
 		self.assertIn(self.course, resp.context['courses'])
 		self.assertIn(self.course2, resp.context['courses'])
 		self.assertTemplateUsed(resp, 'courses/course_list.html')
+		self.assertContains(resp, self.course.title)
 
 	def test_course_detail_view(self):
 		resp = self.client.get(reverse('courses:detail', 
 										kwargs={'pk': self.course.pk}))
 		self.assertEqual(resp.status_code, 200)
 		self.assertEqual(self.course, resp.context['course'])
+		self.assertTemplateUsed(resp, 'courses/course_detail.html')
+		self.assertContains(resp, self.course.title)
 
 	def test_step_detail_view(self):
 		resp = self.client.get(reverse('courses:step', kwargs={
@@ -64,3 +67,5 @@ class CourseViewTests(TestCase):
 										'step_pk': self.step.pk}))
 		self.assertEqual(resp.status_code, 200)
 		self.assertEqual(self.step, resp.context['step'])
+		self.assertTemplateUsed(resp, 'courses/step_detail.html')
+		self.assertContains(resp, self.course.title)
